@@ -1,6 +1,7 @@
 import time
 import pandas as pd
 import numpy as np
+import calendar
 
 CITY_DATA = { 'chicago': 'chicago.csv',
               'new york': 'new_york_city.csv',
@@ -26,11 +27,24 @@ def get_filters():
             print('Looks like you want to hear about {}!, If this is not true, restart program now!'.format(city.title()))
     
     # get user input for month (all, january, february, ... , june)
-    month = input("Do you want specific month or all? if not all please choose from\n ['january', 'february', 'march', 'april', 'may', 'june'] \n").lower()
+    months = ['all','january', 'february', 'march', 'april', 'may', 'june']
+    month = ""
+    while month not in months:
+        month = input("Do you want specific month or all? if not all please choose from\n ['all','january', 'february', 'march', 'april', 'may', 'june'] \n").lower()
+        if month not in months:
+            print('Invalid input Value')
+            print()
 
     # get user input for day of week (all, monday, tuesday, ... sunday)
-    day = input('Do you want a specific day or all? if not all kindly enter the day name (e.g., sunday, monday..)\n')
-
+    days = ['all','monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday']
+    day = ""
+    while day not in days:
+        day = input(
+            "Do you want specific day or all? if not all please choose from\n  ['all','monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'] \n"
+        ).lower()
+        if day not in days:
+            print('Invalid input Value')
+            print()
     print('-'*40)
     return city, month, day
 
@@ -74,6 +88,23 @@ def load_data(city, month, day):
     # print(df.head())
     return df 
 
+def five_rows_data(df):
+    show_five_row = input('Would you like to display 5 rows if data? if yes type yes\n').lower()
+    if show_five_row == 'yes':
+        print()
+        head_or_tail = ""
+        while head_or_tail not in ['head', 'tail']:
+            head_or_tail = input("If you want to display first 5 rows type head, if you want to display last 5 rows type tail\n").lower()
+            print(head_or_tail)
+            if head_or_tail not in ['head', 'tail']:
+                print('Invalid Value, kindly choose head or tail')
+        if head_or_tail == 'head':
+            print(df.head())
+        else:
+            print(df.tail())
+    else:
+        pass
+            
 
 def time_stats(df):
     """Displays statistics on the most frequent times of travel."""
@@ -82,12 +113,12 @@ def time_stats(df):
     start_time = time.time()
     # display the most common month
     print()
-    print('The most common month:',df['month'].mode()[0])
+    print('The most common month:', calendar.month_name[df['month'].mode()[0]])
     print()
 
     # display the most common day of week
     print()
-    print('The most common day of week:',df['day_of_week'].mode()[0])
+    print('The most common day of week:', df['day_of_week'].mode()[0])
     print()
 
     # display the most common start hour
@@ -185,6 +216,7 @@ def main():
         if df.empty:
             print('DataFrame is empty!')
         else:
+            five_rows_data(df)
             time_stats(df)
             station_stats(df)
             trip_duration_stats(df)
